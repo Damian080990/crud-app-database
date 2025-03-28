@@ -1,17 +1,24 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import routes from './src/routes/crudRoutes';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const cors = require('cors');
 
 const app = express(); // tworzymy aplikację i uruchamiamy serwer express
 const PORT = 3000;
-app.use(cors({ origin: 'http://localhost:5173' })); // Pozwala na żądania tylko z tego adresu
+app.use(cors({ origin: '*' })); // Pozwala na żądania tylko z tego adresu
 
 
-// moongose connection
-//mongoose.Promise = global.Promise
-mongoose.connect('mongodb://127.0.0.1:27017/CoresListDb');
+mongoose
+    .connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log("✅ Połączono z MongoDB"))
+    .catch((err) => console.error("❌ Błąd połączenia z MongoDB:", err));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
