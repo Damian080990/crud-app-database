@@ -9,7 +9,12 @@ const cors = require('cors');
 
 const app = express(); // tworzymy aplikację i uruchamiamy serwer express
 const PORT = 3000;
-app.use(cors({ origin: '*' })); // Pozwala na żądania tylko z tego adresu
+
+app.use(cors({
+    origin: 'https://project-data-managment-crud-app.netlify.app', // Twoja aplikacja na Netlify
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+}));
 
 
 mongoose
