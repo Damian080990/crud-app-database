@@ -33,7 +33,7 @@ setInterval(async () => {
     } catch (err) {
         console.error('⚠️ Błąd podczas pingowania MongoDB:', err.message);
     }
-}, 300000); // 5 minut
+}, 600000); // 5 minut
 
 // ----------------- Middleware -----------------
 app.use(express.json());
