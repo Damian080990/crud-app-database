@@ -1,45 +1,50 @@
+// server.js
 import express from 'express';
 import mongoose from 'mongoose';
-import routes from './src/routes/crudRoutes';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import cors from 'cors';
+import routes from './src/routes/crudRoutes.js';
 
 dotenv.config();
 
-const cors = require('cors');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const app = express(); // tworzymy aplikację i uruchamiamy serwer express
-const PORT = 3000;
-
+// ----------------- CORS -----------------
 app.use(cors({
-    origin: 'https://project-data-managment-crud-app.netlify.app', // Twoja aplikacja na Netlify
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type'],
+    origin: 'https://project-data-managment-crud-app.netlify.app', // front Netlify
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // jeśli używasz cookies lub auth
 }));
 
-
-mongoose
-    .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+// ----------------- Mongoose -----------------
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
     .then(() => console.log("✅ Połączono z MongoDB"))
-    .catch((err) => console.error("❌ Błąd połączenia z MongoDB:", err));
+    .catch(err => console.error("❌ Błąd połączenia z MongoDB:", err));
 
+// ----------------- Middleware -----------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-//serving static files
 app.use(express.static('public'));
 
+// ----------------- Routes -----------------
+routes(app);
 
-routes(app); //obslugujemy trasy w aplikacji
+// Testowy endpoint CORS
+app.get('/test-cors', (req, res) => {
+    res.json({ message: 'CORS działa poprawnie!' });
+});
 
-//Teraz utworzymy pierwszy endpoint
+// Strona główna
+app.get('/', (req, res) => {
+    res.send(`Node and Express server is running on port ${PORT}`);
+});
 
-app.get('/', (req, res) =>
-    res.send(`Node and express server is running on port ${PORT}`)
-);
-
-app.listen(PORT, () =>
-    console.log(`Your server is running on port ${PORT}`)
-);
+// ----------------- Start serwera -----------------
+app.listen(PORT, () => {
+    console.log(`Your server is running on port ${PORT}`);
+});
