@@ -26,6 +26,15 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("✅ Połączono z MongoDB"))
     .catch(err => console.error("❌ Błąd połączenia z MongoDB:", err));
 
+setInterval(async () => {
+    try {
+        await mongoose.connection.db.admin().command({ ping: 1 });
+        console.log('✅ Ping MongoDB – baza nadal aktywna');
+    } catch (err) {
+        console.error('⚠️ Błąd podczas pingowania MongoDB:', err.message);
+    }
+}, 300000); // 5 minut
+
 // ----------------- Middleware -----------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
